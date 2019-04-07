@@ -7,14 +7,14 @@
 #include <GL/glut.h>
 #endif
 // angle of rotation for the camera direction TODO
-float angle = 0.0f;
+float angle = 90.0f;
 float angle2 = 0.0f;
 
 // actual vector representing the camera's direction
 float lx = 0.0f, lz = -1.0f, ly=0.0f;
 
 // XYZ position of the camera TODO
-float x = -1.0f, z = 5.0f, y=1.0f;
+float x = -7.0f, z = 10.0f, y=1.0f;
 float degreeXD = 0;
 float degreeXD2 = 0;
 float degreeXD3 = 0;
@@ -24,6 +24,7 @@ float deltaAngle = 0.0f;
 float deltaAngle2 = 0.0f;
 float deltaMove = 0;
 int xOrigin = -1;
+int yOrigin = -1;
 float deltaDegree = 0.0f;
 
 void changeSize(int w, int h) {
@@ -364,6 +365,7 @@ void renderScene(void) {
 		0.0f, 1.0f, 0.0f);
 
 	szachownica(-50, 0, -50, 10);
+	prostopadloscian(-5, 0, -10, 10, 10);
 	osie();
 	glPushMatrix();
 		glTranslatef(0, 2, 14.6);
@@ -378,7 +380,7 @@ void renderScene(void) {
 			glTranslatef(0, 2, 13);
 			glRotatef(90, 0, 1, 0);
 			glRotatef(90, 1, 0, 0);
-			walec(-1.55, 0, -1.7, 0.5, 3.4);
+			walec(-1.6, 0, -1.7, 0.5, 3.4);
 			glPopMatrix();
 	glPopMatrix();
 	glPushMatrix();
@@ -394,8 +396,8 @@ void renderScene(void) {
 		glPushMatrix();
 		glTranslatef(0, 2, 13);
 		glRotatef(90, 0, 1, 0);
-		walec(-1.55, 0, -1.7, 0.5, 3.4);
-		glTranslatef(-1.55, 0, 0);
+		walec(-1.6, 0, -1.7, 0.5, 3.4);
+		glTranslatef(-1.6, 0, 0);
 		glColor3f(0, 0, 0);
 		glutSolidSphere(0.9, 20, 20);
 		glPopMatrix();
@@ -407,6 +409,14 @@ void processNormalKeys(unsigned char key, int xx, int yy) {
 
 	if (key == 27)
 		exit(0);
+	if (key == 48)
+		deltaMove = 0.5f;
+}
+void processNormalUpKeys(unsigned char key, int xx, int yy) {
+	if (key == 48)
+	{
+		deltaMove = 0.0f;
+	}
 }
 
 void pressKey(int key, int xx, int yy) {
@@ -434,12 +444,13 @@ void releaseKey(int key, int x, int y) {
 }
 void mouseMove(int x, int y) {
 
-	if (xOrigin >= 0) {
+	if (xOrigin >= 0 &&yOrigin>=0) {
 
 		deltaAngle = (x - xOrigin) * 0.001f;
-
+		deltaAngle2=(y-yOrigin)* 0.001f;
 		lx = sin(angle + deltaAngle);
 		lz = -cos(angle + deltaAngle);
+		ly = -sin(angle2 + deltaAngle2);
 	}
 }
 
@@ -450,9 +461,12 @@ void mouseButton(int button, int state, int x, int y) {
 		if (state == GLUT_UP) {
 			angle += deltaAngle;
 			xOrigin = -1;
+			yOrigin = -1;
+			angle2 += deltaAngle2;
 		}
 		else {
 			xOrigin = x;
+			yOrigin = y;
 		}
 	}
 }
@@ -473,6 +487,7 @@ int main(int argc, char **argv) {
 
 	glutIgnoreKeyRepeat(1);
 	glutKeyboardFunc(processNormalKeys);
+	glutKeyboardUpFunc(processNormalUpKeys);
 	glutSpecialFunc(pressKey);
 	glutSpecialUpFunc(releaseKey);
 
@@ -483,6 +498,11 @@ int main(int argc, char **argv) {
 	// OpenGL init
 	glEnable(GL_DEPTH_TEST);
 
+	//xD
+	deltaAngle = (x - xOrigin) * 0.001f;
+	deltaAngle2 = (y - yOrigin)* 0.001f;
+	lx = sin(angle + deltaAngle);
+	lz = -cos(angle + deltaAngle);
 	// enter GLUT event processing cycle
 	glutMainLoop();
 
